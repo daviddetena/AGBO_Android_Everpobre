@@ -2,6 +2,7 @@ package com.daviddetena.everpobre.model.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -85,6 +86,26 @@ public class DBHelper extends SQLiteOpenHelper {
                 // upgrades for version 3->4
         }
     }
+
+
+    /**
+     * Método estático para obtener la conexión a la db
+     * @param dbHelper
+     * @return
+     */
+    public static SQLiteDatabase getDb(DBHelper dbHelper) {
+        // Convención para conectar con la DB a través del dbHelper
+        SQLiteDatabase db = null;
+        try{
+            db = dbHelper.getWritableDatabase();
+        }
+        catch(SQLiteException e){
+            // Inyecta dependencia del objeto excepción
+            db = dbHelper.getReadableDatabase();
+        }
+        return db;
+    }
+
 
     // convenience methods to convert types Java <-->SQLite
 

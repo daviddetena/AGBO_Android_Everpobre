@@ -12,6 +12,7 @@ import com.daviddetena.everpobre.model.Notebook;
 import com.daviddetena.everpobre.model.db.DBHelper;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
 
 import static com.daviddetena.everpobre.model.db.DBConstants.*;  // importo estáticos
 
@@ -43,7 +44,7 @@ public class NotebookDAO implements DAOPersistable<Notebook>{
 
         // Instancia compartida DBHelper para el contexto y obtención de la db
         final DBHelper dbHelper = DBHelper.getInstance(context.get());
-        SQLiteDatabase db = getDb(dbHelper);
+        SQLiteDatabase db = DBHelper.getDb(dbHelper);
 
         db.beginTransaction();
         long id = DBHelper.INVALID_ID;
@@ -52,6 +53,7 @@ public class NotebookDAO implements DAOPersistable<Notebook>{
             // El null hack es para cuando se crea un registro totalmente vacío
             id = db.insert(TABLE_NOTEBOOK, null, getContentValues(data));
             //data.setId(id);
+            db.setTransactionSuccessful();
         }
         finally{
             db.endTransaction();
@@ -63,30 +65,20 @@ public class NotebookDAO implements DAOPersistable<Notebook>{
 
 
     /**
-     * Método estático para obtener la conexión a la db
-     * @param dbHelper
-     * @return
-     */
-    public static SQLiteDatabase getDb(DBHelper dbHelper) {
-        // Convención para conectar con la DB a través del dbHelper
-        SQLiteDatabase db = null;
-        try{
-            db = dbHelper.getWritableDatabase();
-        }
-        catch(SQLiteException e){
-            // Inyecta dependencia del objeto excepción
-            db = dbHelper.getReadableDatabase();
-        }
-        return db;
-    }
-
-
-    /**
      * Método de conveniencia para poner en el contexto los datos necesarios de una libreta
      * @param notebook
      * @return
      */
     private ContentValues getContentValues(Notebook notebook) {
+
+        if(notebook.getCreationDate() == null){
+            notebook.setCreationDate(new Date());
+        }
+
+        if(notebook.getModificationDate() == null){
+            notebook.setModificationDate(new Date());
+        }
+
         ContentValues content = new ContentValues();
         content.put(KEY_NOTEBOOK_NAME, notebook.getName());
         content.put(KEY_NOTEBOOK_CREATION_DATE, DBHelper.convertDateToLong(notebook.getCreationDate()));
@@ -106,13 +98,14 @@ public class NotebookDAO implements DAOPersistable<Notebook>{
         final DBHelper dbHelper = DBHelper.getInstance(context.get());
 
         // Convención para conectar con la DB a través del dbHelper
-        SQLiteDatabase db = getDb(dbHelper);
+        SQLiteDatabase db = DBHelper.getDb(dbHelper);
 
         db.beginTransaction();
 
         try{
             //db.update(TABLE_NOTEBOOK, getContentValues(data), KEY_NOTEBOOK_ID + "=" + id, null);
             db.update(TABLE_NOTEBOOK, getContentValues(data), KEY_NOTEBOOK_ID + "=?", new String[]{"" + id});
+            db.setTransactionSuccessful();
         }
         finally{
             db.endTransaction();
@@ -124,7 +117,7 @@ public class NotebookDAO implements DAOPersistable<Notebook>{
     public void delete(long id) {
         // Instancia compartida DBHelper para el contexto y obtención de la db
         final DBHelper dbHelper = DBHelper.getInstance(context.get());
-        SQLiteDatabase db = getDb(dbHelper);
+        SQLiteDatabase db = DBHelper.getDb(dbHelper);
 
         if(id == DBHelper.INVALID_ID){
             // Borramos todos
@@ -158,7 +151,7 @@ public class NotebookDAO implements DAOPersistable<Notebook>{
     @Override
     public Cursor queryCursor() {
         final DBHelper dbHelper = DBHelper.getInstance(context.get());
-        SQLiteDatabase db = getDb(dbHelper);
+        SQLiteDatabase db = DBHelper.getDb(dbHelper);
 
         // Obtenemos cursor con el query de todas las libretas. Orden obligatorio, en este caso, por ID
         Cursor cursor = db.query(TABLE_NOTEBOOK, allColumns, null, null, null, null, KEY_NOTEBOOK_ID);
@@ -170,7 +163,7 @@ public class NotebookDAO implements DAOPersistable<Notebook>{
         Notebook notebook = null;       // hay que inicializarla siempre
 
         final DBHelper dbHelper = DBHelper.getInstance(context.get());
-        SQLiteDatabase db = getDb(dbHelper);
+        SQLiteDatabase db = DBHelper.getDb(dbHelper);
 
         final String whereClause = KEY_NOTEBOOK_ID + "=" + id;
         // Obtenemos cursor con query para la libreta que se busca
