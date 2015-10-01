@@ -1,14 +1,18 @@
 package com.daviddetena.everpobre.fragments;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.daviddetena.everpobre.R;
+import com.daviddetena.everpobre.activities.EditNotebookActivity;
 import com.daviddetena.everpobre.adapters.DataGridAdapter;
 import com.daviddetena.everpobre.model.dao.NotebookDAO;
 
@@ -49,5 +53,28 @@ public class DataGridFragment extends Fragment {
 
         // Asignamos adapter al grid para que pida y muestre datos
         gridView.setAdapter(adapter);
+
+        // Listener para click corto sobre la celda X
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "Single click", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Listener para pulsación larga sobre la celda X
+        gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getActivity(), "Long click", Toast.LENGTH_SHORT).show();
+
+                // Mostramos pantalla de edición de Notebook mediante Intent
+                Intent i = new Intent(getActivity(), EditNotebookActivity.class);
+                startActivity(i);
+
+                // True no detecta el single click. Con false sí, y haría long click + single click
+                return true;
+            }
+        });
     }
 }
