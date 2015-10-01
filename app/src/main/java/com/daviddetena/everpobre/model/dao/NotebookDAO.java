@@ -173,24 +173,35 @@ public class NotebookDAO implements DAOPersistable<Notebook>{
             if(cursor.getCount() > 0){
                 // Nos movemos al primer elemento del cursor
                 cursor.moveToFirst();
-
-                // Creamos nuevo notebook con nombre extrayendo del cursor la posición de la columna
-                // name del mismo
-                notebook = new Notebook(cursor.getString(cursor.getColumnIndex(KEY_NOTEBOOK_NAME)));
-                notebook.setId(cursor.getLong(cursor.getColumnIndex(KEY_NOTEBOOK_ID)));
-
-                long creationDate = cursor.getLong(cursor.getColumnIndex(KEY_NOTEBOOK_CREATION_DATE));
-                long modificationDate = cursor.getLong(cursor.getColumnIndex(KEY_NOTEBOOK_MODIFICATION_DATE));
-
-                // Convertimos de long a date a partir del método del DBHelpers
-                notebook.setCreationDate(DBHelper.convertLongToDate(creationDate));
-                notebook.setCreationDate(DBHelper.convertLongToDate(modificationDate));
+                notebook = notebookFromCursor(cursor);
             }
         }
 
         cursor.close();
         db.close();
 
+        return notebook;
+    }
+
+    /**
+     * Método que crea un objeto Notebook a partir del elemento que apunta el cursor de la consulta
+     * DB.
+     * @param cursor
+     * @return
+     */
+    @NonNull
+    public static Notebook notebookFromCursor(Cursor cursor) {
+        Notebook notebook;// Creamos nuevo notebook con nombre extrayendo del cursor la posición de la columna
+        // name del mismo
+        notebook = new Notebook(cursor.getString(cursor.getColumnIndex(KEY_NOTEBOOK_NAME)));
+        notebook.setId(cursor.getLong(cursor.getColumnIndex(KEY_NOTEBOOK_ID)));
+
+        long creationDate = cursor.getLong(cursor.getColumnIndex(KEY_NOTEBOOK_CREATION_DATE));
+        long modificationDate = cursor.getLong(cursor.getColumnIndex(KEY_NOTEBOOK_MODIFICATION_DATE));
+
+        // Convertimos de long a date a partir del método del DBHelpers
+        notebook.setCreationDate(DBHelper.convertLongToDate(creationDate));
+        notebook.setCreationDate(DBHelper.convertLongToDate(modificationDate));
         return notebook;
     }
 }

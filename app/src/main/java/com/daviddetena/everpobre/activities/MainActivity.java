@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.daviddetena.everpobre.R;
+import com.daviddetena.everpobre.model.Notebook;
+import com.daviddetena.everpobre.model.dao.NotebookDAO;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,6 +16,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Metemos fake data para que haya datos tras lanzar la aplicación
+        insertNotebookStubs(10);
+    }
+
+    private void insertNotebookStubs(final int notebooksToInsert) {
+
+        // Añadimos libretas
+        final NotebookDAO notebookDAO = new NotebookDAO(this);
+
+        for(int i=0; i<notebooksToInsert; i++){
+            // Con esto optimizas el no crear dos objetos string para concatenar  "title" con i
+            final String testTitle = String.format("%s %d", "Notebook happy ", i);
+            final Notebook notebook = new Notebook(testTitle);
+            long id = notebookDAO.insert(notebook);
+        }
     }
 
     @Override
