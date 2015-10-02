@@ -5,11 +5,14 @@
     <string name="title_activity_main">Everpobre notebooks</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
     <string name="title_activity_edit_notebook">Edit Notebook</string>
     <string name="action_new_notebook_title">New Notebook</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="txt_notebook_name_mock_text">Un saludito para mi mejor amiguito</string>
+    <string name="txt_notebook_name_hint">Notebook name</string>
+    <string name="txt_notebook_title">Test notebook title</string>
+    <string name="action_save_notebook_text">Save</string>
+    <string name="action_delete_notebook_txt">Delete</string>
 </resources>

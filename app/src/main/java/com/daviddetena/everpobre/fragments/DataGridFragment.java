@@ -14,7 +14,9 @@ import android.widget.Toast;
 import com.daviddetena.everpobre.R;
 import com.daviddetena.everpobre.activities.EditNotebookActivity;
 import com.daviddetena.everpobre.adapters.DataGridAdapter;
+import com.daviddetena.everpobre.model.Notebook;
 import com.daviddetena.everpobre.model.dao.NotebookDAO;
+import com.daviddetena.everpobre.util.Constants;
 
 public class DataGridFragment extends Fragment {
 
@@ -47,8 +49,17 @@ public class DataGridFragment extends Fragment {
 
         // Asignamos el grid view del layout a nuestro variable
         gridView = (GridView) getActivity().findViewById(R.id.grid_view);
+        refreshData();
+    }
+
+
+    /**
+     * Método para refrescar datos
+     */
+    public void refreshData() {
         // Activity hereda de context, qie es el que necesito para obtener cursor
         cursor = new NotebookDAO(getActivity()).queryCursor();
+        cursor.moveToFirst();
         adapter = new DataGridAdapter(getActivity(), cursor);
 
         // Asignamos adapter al grid para que pida y muestre datos
@@ -68,8 +79,22 @@ public class DataGridFragment extends Fragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getActivity(), "Long click", Toast.LENGTH_SHORT).show();
 
-                // Mostramos pantalla de edición de Notebook mediante Intent
+                // Para pasar el notebook podemos tener dos casos:
+                // 1) genero un  objeto notebook que implemente serializale y parcelable para poder
+                // incluirlo en el putExtra del Intent como un objeto
+
+                // Creamos un nuevo objeto Notebook con el notebook de la DB cuyo id me pasan
+                NotebookDAO notebookDAO = new NotebookDAO(getActivity());
+                Notebook notebook = notebookDAO.query(id);
+
+                // Mostramos pantalla de edición de Notebook mediante Intent (Notebook con Parcelable)
                 Intent i = new Intent(getActivity(), EditNotebookActivity.class);
+                i.putExtra(Constants.intent_key_notebook, notebook);
+
+                // 2) paso el id del objeto y en la vista detalle ya obtengo el objeto de la DB
+                //i.putExtra("com.daviddetena.everpobre.notebook", id);
+
+                // Arrancamos nueva actividad
                 startActivity(i);
 
                 // True no detecta el single click. Con false sí, y haría long click + single click

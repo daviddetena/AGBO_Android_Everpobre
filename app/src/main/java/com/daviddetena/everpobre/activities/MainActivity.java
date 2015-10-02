@@ -7,18 +7,35 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.daviddetena.everpobre.R;
+import com.daviddetena.everpobre.fragments.DataGridFragment;
 import com.daviddetena.everpobre.model.Notebook;
 import com.daviddetena.everpobre.model.dao.NotebookDAO;
 
 public class MainActivity extends AppCompatActivity {
+
+    DataGridFragment notebookFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Obtenemos referencia a nuestro Fragment de Notebook
+        notebookFragment = (DataGridFragment) getFragmentManager().findFragmentById(R.id.grid_fragment);
+
         // Metemos fake data para que haya datos tras lanzar la aplicación
-        insertNotebookStubs(10);
+        //insertNotebookStubs(10);
+    }
+
+    /**
+     * Al volver al foreground, pedimos al fragment que se repinte para leer de nuevo los datos de
+     * la DB.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        notebookFragment.refreshData();
     }
 
     private void insertNotebookStubs(final int notebooksToInsert) {

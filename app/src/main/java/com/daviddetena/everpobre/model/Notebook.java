@@ -1,5 +1,7 @@
 package com.daviddetena.everpobre.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -7,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Notebook {
+public class Notebook implements Parcelable {
 
     private long id;
     private String name;
@@ -79,4 +81,42 @@ public class Notebook {
         Note note = new Note(this, text);
         allNotes().add(note);
     }
+
+
+    // METODOS DEL PARCELABLE
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(this.id);
+        dest.writeString(this.name);
+        dest.writeLong(creationDate != null ? creationDate.getTime() : -1);
+        dest.writeLong(modificationDate != null ? modificationDate.getTime() : -1);
+        dest.writeList(this.notes);
+    }
+
+    protected Notebook(Parcel in) {
+        this.id = in.readLong();
+        this.name = in.readString();
+        long tmpCreationDate = in.readLong();
+        this.creationDate = tmpCreationDate == -1 ? null : new Date(tmpCreationDate);
+        long tmpModificationDate = in.readLong();
+        this.modificationDate = tmpModificationDate == -1 ? null : new Date(tmpModificationDate);
+        this.notes = new ArrayList<Note>();
+        in.readList(this.notes, List.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Notebook> CREATOR = new Parcelable.Creator<Notebook>() {
+        public Notebook createFromParcel(Parcel source) {
+            return new Notebook(source);
+        }
+
+        public Notebook[] newArray(int size) {
+            return new Notebook[size];
+        }
+    };
 }

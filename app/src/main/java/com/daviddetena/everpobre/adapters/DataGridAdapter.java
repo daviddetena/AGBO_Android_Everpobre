@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.daviddetena.everpobre.R;
 import com.daviddetena.everpobre.model.Notebook;
 import com.daviddetena.everpobre.model.dao.NotebookDAO;
-import com.daviddetena.everpobre.model.db.DBConstants;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,14 +19,14 @@ import butterknife.ButterKnife;
 public class DataGridAdapter extends CursorAdapter{
 
     private LayoutInflater layoutInflater;
-    private Cursor cursor;
+    private Cursor dataCursor;
 
     public DataGridAdapter(Context context, Cursor c) {
         super(context, c);
 
         // Relleno el layoutInflater a partir del contexto que se me pasa
         this.layoutInflater = LayoutInflater.from(context);
-        this.cursor = c;
+        this.dataCursor = c;
     }
 
     /**
@@ -50,7 +49,7 @@ public class DataGridAdapter extends CursorAdapter{
 
     /**
      * Con este método tendríamos la unión de newView + bindView. De esta forma puedo comprobar si
-     * ya hay una vista anterior para recuperarla y no tenerla que repintarla
+     * ya hay una vista anterior para recuperarla y no tener que repintarla
      * @param position
      * @param view
      * @param parent
@@ -80,9 +79,9 @@ public class DataGridAdapter extends CursorAdapter{
             view.setTag(holder);
         }
 
-        // Cursor posicionado en el registro i-esimo. Creamos objeto Notebook a partir del cursor
+        // Cursor posicionado en el registro i-esimo. Creamos objeto Notebook a partir del dataCursor
         // que apunta al registro de la DB
-        Notebook notebook = NotebookDAO.notebookFromCursor(cursor);
+        Notebook notebook = NotebookDAO.notebookFromCursor(this.dataCursor);
 
         // Pintamos en pantalla el texto del notebook que maneja el ViewHolder
         holder.txtTitle.setText(notebook.getName());

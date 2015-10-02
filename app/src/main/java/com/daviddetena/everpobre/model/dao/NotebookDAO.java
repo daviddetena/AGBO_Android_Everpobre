@@ -191,8 +191,9 @@ public class NotebookDAO implements DAOPersistable<Notebook>{
      */
     @NonNull
     public static Notebook notebookFromCursor(Cursor cursor) {
-        Notebook notebook;// Creamos nuevo notebook con nombre extrayendo del cursor la posición de la columna
+        // Creamos nuevo notebook con nombre extrayendo del cursor la posición de la columna
         // name del mismo
+        Notebook notebook;
         notebook = new Notebook(cursor.getString(cursor.getColumnIndex(KEY_NOTEBOOK_NAME)));
         notebook.setId(cursor.getLong(cursor.getColumnIndex(KEY_NOTEBOOK_ID)));
 

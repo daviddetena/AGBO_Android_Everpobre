@@ -2,8 +2,17 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.daviddetena.everpobre.activities.EditNotebookActivity">
-    <item android:id="@+id/action_settings"
-          android:title="@string/action_settings"
+
+
+      <item android:id="@+id/action_save_notebook"
+            android:title="@string/action_save_notebook_text"
+            android:icon="@android:drawable/ic_menu_save"
+            android:orderInCategory="100"
+            app:showAsAction="always"/>
+
+        <item android:id="@+id/action_delete_notebook"
+          android:title="@string/action_delete_notebook_txt"
+          android:icon="@android:drawable/ic_menu_delete"
           android:orderInCategory="100"
           app:showAsAction="never"/>
 </menu>
