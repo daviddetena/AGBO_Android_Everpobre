@@ -59,7 +59,6 @@ public class DataGridFragment extends Fragment {
     public void refreshData() {
         // Activity hereda de context, qie es el que necesito para obtener cursor
         cursor = new NotebookDAO(getActivity()).queryCursor();
-        cursor.moveToFirst();
         adapter = new DataGridAdapter(getActivity(), cursor);
 
         // Asignamos adapter al grid para que pida y muestre datos
