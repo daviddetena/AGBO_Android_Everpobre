@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.daviddetena.everpobre.R;
 import com.daviddetena.everpobre.activities.EditNotebookActivity;
+import com.daviddetena.everpobre.activities.ShowNotebookActivity;
 import com.daviddetena.everpobre.adapters.DataGridAdapter;
 import com.daviddetena.everpobre.model.Notebook;
 import com.daviddetena.everpobre.model.dao.NotebookDAO;
@@ -68,7 +69,9 @@ public class DataGridFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "Single click", Toast.LENGTH_SHORT).show();
+                // Lanzamos activity de vista de detalle
+                Intent i = new Intent(getActivity(), ShowNotebookActivity.class);
+                startActivity(i);
             }
         });
 
@@ -76,7 +79,6 @@ public class DataGridFragment extends Fragment {
         gridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "Long click", Toast.LENGTH_SHORT).show();
 
                 // Para pasar el notebook podemos tener dos casos:
                 // 1) genero un  objeto notebook que implemente serializale y parcelable para poder

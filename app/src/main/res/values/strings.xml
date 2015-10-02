@@ -15,4 +15,6 @@
     <string name="txt_notebook_title">Test notebook title</string>
     <string name="action_save_notebook_text">Save</string>
     <string name="action_delete_notebook_txt">Delete</string>
+    <string name="title_activity_show_notebook">ShowNotebookActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>

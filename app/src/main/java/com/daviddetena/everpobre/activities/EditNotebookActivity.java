@@ -119,6 +119,16 @@ public class EditNotebookActivity extends AppCompatActivity {
 
     private void deleteNotebook() {
 
+        // Comprobamos que no sea nulo lo que vayamos a eliminar
+        if(notebook == null){
+            return;
+        }
+
+        final NotebookDAO notebookDAO = new NotebookDAO(this);
+        notebookDAO.delete(notebook);
+
+        // Cerramos actividad
+        finish();
     }
 
 
