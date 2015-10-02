@@ -21,10 +21,39 @@ import com.daviddetena.everpobre.util.Constants;
 
 public class DataGridFragment extends Fragment {
 
+    /**
+     * Creamos interfaz personalizada para detectar eventos sobre el Grid
+     */
+    public interface OnDataGridFragmentClickListener{
+
+        /**
+         * Método cuando se hace click
+         * @param parent
+         * @param view
+         * @param position
+         * @param id
+         */
+        public void dataGridElementClick(AdapterView<?> parent, View view, int position, long id);
+
+        /**
+         * Método cuando se hace long click
+         * @param parent
+         * @param view
+         * @param position
+         * @param id
+         * @return
+         */
+        public boolean dataGridElementLongClick(AdapterView<?> parent, View view, int position, long id);
+    }
+
     // GridView que muestra el fragment y adapter que comunica los datos con el grid
     GridView gridView;
     DataGridAdapter adapter;
     private Cursor cursor;
+
+    // Objeto de la interfaz definida anteriormente. Debería ser WeakReference
+    private OnDataGridFragmentClickListener listener;
+
 
     public DataGridFragment() {
 
@@ -69,9 +98,11 @@ public class DataGridFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Lanzamos activity de vista de detalle
-                Intent i = new Intent(getActivity(), ShowNotebookActivity.class);
-                startActivity(i);
+
+                // Comprobamos que no haya listener y llamamos al método de la interfaz para click
+                if (listener != null) {
+                    listener.dataGridElementClick(parent, view, position, id);
+                }
             }
         });
 
@@ -80,27 +111,25 @@ public class DataGridFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-                // Para pasar el notebook podemos tener dos casos:
-                // 1) genero un  objeto notebook que implemente serializale y parcelable para poder
-                // incluirlo en el putExtra del Intent como un objeto
+                // Comprobamos que no haya listener (como el delegado de Obj-C) y llamamos al método
+                // de la interfaz para long click
+                if (listener != null) {
+                    listener.dataGridElementLongClick(parent, view, position, id);
+                }
 
-                // Creamos un nuevo objeto Notebook con el notebook de la DB cuyo id me pasan
-                NotebookDAO notebookDAO = new NotebookDAO(getActivity());
-                Notebook notebook = notebookDAO.query(id);
-
-                // Mostramos pantalla de edición de Notebook mediante Intent (Notebook con Parcelable)
-                Intent i = new Intent(getActivity(), EditNotebookActivity.class);
-                i.putExtra(Constants.intent_key_notebook, notebook);
-
-                // 2) paso el id del objeto y en la vista detalle ya obtengo el objeto de la DB
-                //i.putExtra("com.daviddetena.everpobre.notebook", id);
-
-                // Arrancamos nueva actividad
-                startActivity(i);
-
-                // True no detecta el single click. Con false sí, y haría long click + single click
                 return true;
             }
         });
+    }
+
+
+    // Añadimos getter y setter para el listener
+
+    public OnDataGridFragmentClickListener getListener() {
+        return listener;
+    }
+
+    public void setListener(OnDataGridFragmentClickListener listener) {
+        this.listener = listener;
     }
 }
