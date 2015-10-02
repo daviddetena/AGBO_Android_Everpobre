@@ -1,6 +1,7 @@
 package com.daviddetena.everpobre.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,6 +26,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Obtenemos referencia a nuestro DataGridFragment de Notebook
         notebookFragment = (DataGridFragment) getFragmentManager().findFragmentById(R.id.grid_fragment);
+
+        // Cargo el fragmento con el cursor, el layout y el grid apropiados
+        Cursor cursor = new NotebookDAO(this).queryCursor();
+        notebookFragment.setCursor(cursor);
+        notebookFragment.setIdLayout(R.layout.fragment_data_grid);
+        notebookFragment.setIdGridView(R.id.grid_view);
 
         // Personalizamos los métodos de la interfaz de DataGridFragment
         notebookFragment.setListener(new DataGridFragment.OnDataGridFragmentClickListener() {
@@ -76,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        // Cargo el fragmento con el cursor, el layout y el grid apropiados
+        Cursor cursor = new NotebookDAO(this).queryCursor();
+        notebookFragment.setCursor(cursor);
         notebookFragment.refreshData();
     }
 

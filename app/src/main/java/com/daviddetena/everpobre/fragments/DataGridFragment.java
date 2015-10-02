@@ -1,23 +1,17 @@
 package com.daviddetena.everpobre.fragments;
 
-import android.content.Intent;
+import android.app.Fragment;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.daviddetena.everpobre.R;
-import com.daviddetena.everpobre.activities.EditNotebookActivity;
-import com.daviddetena.everpobre.activities.ShowNotebookActivity;
 import com.daviddetena.everpobre.adapters.DataGridAdapter;
-import com.daviddetena.everpobre.model.Notebook;
 import com.daviddetena.everpobre.model.dao.NotebookDAO;
-import com.daviddetena.everpobre.util.Constants;
 
 public class DataGridFragment extends Fragment {
 
@@ -26,23 +20,8 @@ public class DataGridFragment extends Fragment {
      */
     public interface OnDataGridFragmentClickListener{
 
-        /**
-         * Método cuando se hace click
-         * @param parent
-         * @param view
-         * @param position
-         * @param id
-         */
+        // Métodos de interfaz para cuando se haga click y long click sobre el grid
         public void dataGridElementClick(AdapterView<?> parent, View view, int position, long id);
-
-        /**
-         * Método cuando se hace long click
-         * @param parent
-         * @param view
-         * @param position
-         * @param id
-         * @return
-         */
         public boolean dataGridElementLongClick(AdapterView<?> parent, View view, int position, long id);
     }
 
@@ -50,10 +29,29 @@ public class DataGridFragment extends Fragment {
     GridView gridView;
     DataGridAdapter adapter;
     private Cursor cursor;
+    private int idLayout = R.layout.fragment_data_grid;
+    private int idGridView;
 
     // Objeto de la interfaz definida anteriormente. Debería ser WeakReference
     private OnDataGridFragmentClickListener listener;
 
+
+    /**
+     * Método de factoría para crear el fragment desde código y no desde XML
+     * @param cursor
+     * @param idLayout
+     * @param idGridView
+     * @return
+     */
+    public static DataGridFragment createDataGridFragment(Cursor cursor, int idLayout, int idGridView){
+        DataGridFragment fragment = new DataGridFragment();
+
+        fragment.cursor = cursor;
+        fragment.idLayout = idLayout;
+        fragment.idGridView = idGridView;
+
+        return fragment;
+    }
 
     public DataGridFragment() {
 
@@ -65,7 +63,7 @@ public class DataGridFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_data_grid, container, false);
+        return inflater.inflate(idLayout, container, false);
     }
 
 
@@ -78,8 +76,12 @@ public class DataGridFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         // Asignamos el grid view del layout a nuestro variable
-        gridView = (GridView) getActivity().findViewById(R.id.grid_view);
-        refreshData();
+        gridView = (GridView) getActivity().findViewById(idGridView);
+
+        if(gridView != null){
+            refreshData();
+        }
+
     }
 
 
@@ -87,8 +89,13 @@ public class DataGridFragment extends Fragment {
      * Método para refrescar datos
      */
     public void refreshData() {
-        // Activity hereda de context, qie es el que necesito para obtener cursor
-        cursor = new NotebookDAO(getActivity()).queryCursor();
+
+        if(cursor == null){
+            return;
+        }
+
+        gridView = (GridView) getActivity().findViewById(idGridView);
+
         adapter = new DataGridAdapter(getActivity(), cursor);
 
         // Asignamos adapter al grid para que pida y muestre datos
@@ -131,5 +138,29 @@ public class DataGridFragment extends Fragment {
 
     public void setListener(OnDataGridFragmentClickListener listener) {
         this.listener = listener;
+    }
+
+    public Cursor getCursor() {
+        return cursor;
+    }
+
+    public void setCursor(Cursor cursor) {
+        this.cursor = cursor;
+    }
+
+    public int getIdGridView() {
+        return idGridView;
+    }
+
+    public void setIdGridView(int idGridView) {
+        this.idGridView = idGridView;
+    }
+
+    public int getIdLayout() {
+        return idLayout;
+    }
+
+    public void setIdLayout(int idLayout) {
+        this.idLayout = idLayout;
     }
 }
